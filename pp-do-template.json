@@ -1,0 +1,73 @@
+{
+    "schemaVersion": "1.0.0",
+    "class": "Device",
+    "async": true,
+    "label": "PayPal Onboarding Template",
+    "Common": {
+        "class": "Tenant",
+        "hostname": "${hostname}",
+        "dbVars": {
+            "class": "DbVariables",
+            "ui.advisory.enabled": true,
+            "ui.advisory.color": "green",
+            "ui.advisory.text": "/Common/hostname",
+            "provision.extramb": "500",
+            "config.allow.rfc3927": "enable"
+        },
+        "myDns": {
+            "class": "DNS",
+            "nameServers": [
+                "169.254.169.254",
+                "${dns_server}",
+                "2001:4860:4860::8844"
+            ],
+            "search": [
+                "${dns_suffix}",
+                "google.internal",
+                "f5.com"
+            ]
+        },
+        "myNtp": {
+            "class": "NTP",
+            "servers": [
+                "${ntp_server}",
+                "1.pool.ntp.org",
+                "2.pool.ntp.org"
+            ],
+            "timezone": "${timezone}"
+        },
+        "myProvisioning": {
+            "class": "Provision",
+            "ltm": "nominal"
+        },
+        "configsync": {
+            "class": "ConfigSync",
+            "configsyncIp": "${local_selfip_int}"
+        },
+        "failoverAddress": {
+            "class": "FailoverUnicast",
+            "address": "${local_selfip_int}"
+        },
+        "synconlyGroup": {
+            "class": "DeviceGroup",
+            "type": "sync-only",
+            "members": [
+                ${sync_group_members}
+            ],
+            "owner": "/Common/synconlyGroup/members/0",
+            "autoSync": true,
+            "saveOnAutoSync": true,
+            "networkFailover": false,
+            "fullLoadOnSync": false,
+            "asmSync": false
+        },
+        "trust": {
+            "class": "DeviceTrust",
+            "localUsername": "${admin_username}",
+            "localPassword": "${admin_password}",
+            "remoteHost": "/Common/synconlyGroup/members/0",
+            "remoteUsername": "${admin_username}",
+            "remotePassword": "${admin_password}"
+        }
+    }
+}
